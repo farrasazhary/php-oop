@@ -48,7 +48,9 @@
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                         <div class="navbar-nav">
                             <a class="nav-link active" aria-current="page" href="">Home</a>
-                            <a class="nav-link" href="input_mhs.php">input</a>
+                            <a class="nav-link" href="data_mhs.php">Mahasiswa</a>
+                            <a class="nav-link" href="list_buku.php">Buku</a>
+                            <!-- <a class="nav-link" href="input_mhs.php">input</a> -->
                             <a class="nav-link" href="../process/logout.php">Logout</a>
                         </div>
                     </div>
@@ -57,6 +59,9 @@
         </nav>
     </header>
     <table class="table">
+        <div class="mt-3">
+            <a href="input_mhs.php" class="btn btn-primary" role="button">Input Mahasiswa</a>
+        </div>
         <thead>
             <tr>
                 <th scope="col">No</th>

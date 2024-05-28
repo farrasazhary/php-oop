@@ -1,12 +1,11 @@
 <?php
     session_start();
+    if (!isset($_SESSION['user_id'])) {
+    // Jika pengguna belum login, arahkan mereka ke halaman login
+    header("Location: login_form.php");
+    exit();
+}
 
-    //Cek apakah user sudah login
-    // if (!isset($_SESSION['username'])) {
-    //     header("Location: ../public/index.php");
-    //     exit();
-    // }
-    
     // Koneksi ke database
     require_once __DIR__ . '/../config/database.php';
     
@@ -48,10 +47,9 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                         <div class="navbar-nav">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="">Home</a>
                             <a class="nav-link" href="input_mhs.php">input</a>
-                            <a class="nav-link" href="#">Pricing</a>
-                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                            <a class="nav-link" href="../process/logout.php">Logout</a>
                         </div>
                     </div>
                 </div>
@@ -70,22 +68,24 @@
             </tr>
         </thead>
         <tbody>
+            <?php $no = 1; ?>
             <?php foreach ($mahasiswas as $mahasiswa): ?>
-            <tr>
-                <th scope="row"><?= $mahasiswa['id_mahasiswa'] ?></th>
+                <tr>
+                <th scope="row"><?= $no++; ?></th> 
                 <td><?= $mahasiswa['nama_mhs'] ?></td>
                 <td><?= $mahasiswa['alamat_mhs'] ?></td>
                 <td><?= $mahasiswa['kelas_mhs'] ?></td>
                 <td><?= $mahasiswa['no_hp'] ?></td>
                 <td>
-                    <a href="edit_mhs.php?id_mahasiswa=<?= $mahasiswa['id_mahasiswa'] ?>">Edit</a>
-                    <a href="delete_mhs.php?id_mahasiswa=<?= $mahasiswa['id_mahasiswa'] ?>">Delete</a>
+                    <a class="btn btn-primary" href="edit_mhs.php?id=<?php echo $mahasiswa['id_mahasiswa'] ?>">Edit</a>
+                    <a class="btn btn-danger" href="../process/delete_process.php?id=<?php echo $mahasiswa['id_mahasiswa'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus data mahasiswa ini?')">Hapus</a>
                 </td>
             </tr>
             <?php endforeach; ?>
-            
         </tbody>
     </table>
+    <a href="print.php" class="btn btn-primary">Print Data</a>
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

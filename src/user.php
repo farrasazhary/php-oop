@@ -58,14 +58,6 @@ class User {
         return $stmt->rowCount() > 0;
     }
 
-    // public function getMahasiswa() {
-    //     $query = "SELECT * FROM mahasiswa";
-    //     $stmt = $this->$conn->prepare($query);
-    //     $stmt->execute();
-    
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
-
     public function addStudent($name, $address, $class, $phone) {
         $query = "INSERT INTO students (name, address, class, phone) VALUES (:name, :address, :class, :phone)";
         $stmt = $this->conn->prepare($query);

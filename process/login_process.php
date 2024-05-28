@@ -1,22 +1,28 @@
 <?php
-require '../src/User.php';
-// require_once __DIR__ . '/../src/User.php';
+session_start();
+require_once __DIR__ . '/../config/database.php';
+
+$database = new Database();
+$conn = $database->getConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $user = new User($username, $password);
+    $query = "SELECT * FROM users WHERE username = :username";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user->authenticate()) {
-        $_SESSION['username'] = $username; // Simpan username ke session
-        header("Location: ../views/data_mhs.php"); // Alihkan ke halaman data mahasiswa
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        header("Location: ../views/data_mhs.php");
         exit();
     } else {
-        echo "Login failed! Invalid username or password.";
+        $_SESSION['error'] = "Username atau password salah";
+        header("Location: ../views/login_form.php");
+        exit();
     }
-} else {
-    header("Location: ../public/index.php");
-    exit();
 }
 ?>

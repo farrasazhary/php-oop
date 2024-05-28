@@ -1,33 +1,45 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/database.php';
 
-// Cek apakah user sudah login
-// if (!isset($_SESSION['username'])) {
-//     header("Location: ../public/index.php");
-//     exit();
-// }
+class DataHandler {
+    private $conn;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    require_once __DIR__ . '/../src/User.php';
-
-    // Mengambil data dari form
-    $nama = $_POST['nama_mhs'] ?? '';
-    $alamat = $_POST['alamat_mhs'] ?? '';
-    $kelas = $_POST['kelas_mhs'] ?? '';
-    $hp = $_POST['no_hp'] ?? '';
-
-    // Membuat instance User
-    $user = new User();
-
-    // Memasukkan data mahasiswa
-    if ($user->addStudent($nama, $alamat, $kelas, $hp)) {
-        header("Location: ../public/data_mhs.php");
-        exit();
-    } else {
-        echo "Gagal menambahkan data mahasiswa!";
+    public function __construct() {
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
-} else {
-    header("Location: ../public/input_mhs.php");
-    exit();
+
+    public function insertStudent($name, $address, $class, $phone) {
+        $query = "INSERT INTO mahasiswa (nama_mhs, alamat_mhs, kelas_mhs, no_hp) VALUES (:name, :address, :class, :phone)";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':address', $address);
+        $stmt->bindParam(':class', $class);
+        $stmt->bindParam(':phone', $phone);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+// Proses data yang dikirim dari formulir
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $class = $_POST['class'];
+    $phone = $_POST['phone'];
+
+    $dataHandler = new DataHandler();
+
+    if ($dataHandler->insertStudent($name, $address, $class, $phone)) {
+        echo '<script>alert("Data mahasiswa berhasil ditambahkan!");</script>';
+        header("Location: ../views/data_mhs.php"); // Redirect ke halaman sukses
+    } else {
+        echo "Error inserting data.";
+    }
 }
 ?>
